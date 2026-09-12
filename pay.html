@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amigo Dost — Pay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Work+Sans:wght@400;500;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121016; --paper:#1C1826;
+    --ink:#EDE8F5; --ink-soft:#A79FC2;
+    --lavender:#B9A6E8; --berry:#C2688D;
+    --line:rgba(237,232,245,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:"Work Sans", sans-serif;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    max-width:380px; width:100%; background:var(--paper);
+    border:1px solid var(--line); border-radius:4px; padding:28px 24px; text-align:center;
+  }
+  .brand{font-family:"Fraunces", serif; font-size:1.1rem; margin-bottom:4px;}
+  .brand em{font-style:italic; color:var(--berry);}
+  .amount{font-family:"Fraunces", serif; font-size:2.2rem; color:var(--lavender); margin:6px 0 2px;}
+  .order-no{color:var(--ink-soft); font-size:0.85rem; margin-bottom:18px;}
+
+  .meme{
+    background:#000; border-radius:4px; padding:20px 16px; margin:20px 0;
+    border:1px solid var(--line);
+  }
+  .meme-emoji{font-size:2.6rem; line-height:1; margin-bottom:10px;}
+  .meme-line{
+    font-family:"Work Sans", sans-serif; font-weight:800; text-transform:uppercase;
+    font-size:1.05rem; line-height:1.3; color:#fff; margin:0;
+    -webkit-text-stroke:1px #000;
+    text-shadow:1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  }
+  .meme-line.bottom{margin-top:8px;}
+
+  .pay-btn{
+    display:block; width:100%; padding:14px; margin-top:6px;
+    background:var(--lavender); color:#171220; border:none; border-radius:4px;
+    font-family:inherit; font-weight:600; font-size:1rem; cursor:pointer; text-decoration:none;
+  }
+  .pay-btn:active{opacity:0.85;}
+  .fallback{font-size:0.78rem; color:var(--ink-soft); margin-top:14px;}
+  .fallback a{color:var(--lavender);}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">Amigo <em>Dost</em></div>
+  <div class="amount" id="amount">₹0</div>
+  <div class="order-no" id="order-no">Order —</div>
+
+  <div class="meme">
+    <div class="meme-emoji" id="meme-emoji">💸</div>
+    <p class="meme-line" id="meme-top"></p>
+    <p class="meme-line bottom" id="meme-bottom"></p>
+  </div>
+
+  <a href="#" class="pay-btn" id="pay-btn">Pay with UPI app</a>
+  <p class="fallback">Nothing happen? Make sure you have GPay, PhonePe, Paytm, or another UPI app installed, or <a href="#" id="retry-link">tap again</a>.</p>
+</div>
+
+<script>
+  // Original one-liners only — no reproduced meme templates or characters.
+  const memes = [
+    { emoji: '😅', top: 'Me checking my balance', bottom: 'before scanning the QR' },
+    { emoji: '🙈', top: 'Entered the UPI PIN wrong', bottom: 'tries again like nothing happened' },
+    { emoji: '💸', top: 'Payment successful', bottom: 'wallet: my work here is done' },
+    { emoji: '📱', top: 'Scanning the QR code', bottom: 'phone camera has trust issues, won\'t focus' },
+    { emoji: '🫠', top: 'Splitting the bill', bottom: 'everyone suddenly broke' },
+    { emoji: '😌', top: 'One tap and it\'s paid', bottom: 'no cash, no drama' },
+    { emoji: '🤌', top: 'Coffee first', bottom: 'questions later' }
+  ];
+
+  function getParam(name){
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  const amt = getParam('amt') || '0';
+  const orderNo = getParam('order') || 'AD-0000';
+  const pa = getParam('pa') || 'amigodost@upi';
+
+  document.getElementById('amount').textContent = '₹' + amt;
+  document.getElementById('order-no').textContent = 'Order ' + orderNo;
+
+  const pick = memes[Math.floor(Math.random() * memes.length)];
+  document.getElementById('meme-emoji').textContent = pick.emoji;
+  document.getElementById('meme-top').textContent = pick.top;
+  document.getElementById('meme-bottom').textContent = pick.bottom;
+
+  const upiUri = `upi://pay?pa=${encodeURIComponent(pa)}&pn=Amigo%20Dost&am=${amt}&cu=INR&tn=Order%20${orderNo}`;
+  const payBtn = document.getElementById('pay-btn');
+  const retryLink = document.getElementById('retry-link');
+  payBtn.href = upiUri;
+  retryLink.href = upiUri;
+
+  // Try to launch the UPI app automatically after the meme has had a moment on screen.
+  setTimeout(() => { window.location.href = upiUri; }, 1200);
+</script>
+
+</body>
+</html>
